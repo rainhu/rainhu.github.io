@@ -1,26 +1,26 @@
-title: John Smith
-description: My Personal Blog
-author: John Smith
-logo: static/img/avatar.png
-github: https://github.com/ashutosh2k12
-about: Freelance developer
+# Dependencies
+markdown:         redcarpet
+highlighter:      pygments
 
-baseurl: ""
-url: "http://aboutashu.com/hcz-jekyll-blog"
+# Permalinks
+permalink:        pretty
+relative_permalinks: true
 
-disqus_shortname: aboutashu
-google_analytics: UA-72862926-1
+# Setup
+title:            Hyde
+tagline:          'A Jekyll theme'
+description:      'A brazen two-column <a href="http://jekyllrb.com" target="_blank">Jekyll</a> theme that pairs a prominent sidebar with uncomplicated content. Made by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.'
+url:              http://hyde.getpoole.com
+baseurl:          /
 
-share:
-  twitter_username: \#
-  fb_appid: 000000000000
+author:
+  name:           'Mark Otto'
+  url:            https://twitter.com/mdo
 
+paginate:         5
 
-enableTags: true
-tagarray: []
+# Custom vars
+version:          2.1.0
 
-paginate: 20
-per_page: 20
-paginate_path: "/page:num/"
-markdown: kramdown
-gems: [jekyll-paginate, jekyll-gist]
+github:
+  repo:           https://github.com/poole/hyde
