@@ -12,7 +12,7 @@ if(int i=0;i<1;i++){
 {% endhighlight %}
 
 
-```java
+```java linenos
 if(int i=0;i<1;i++){
     a++;
 }
