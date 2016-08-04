@@ -1,15 +1,15 @@
 # Dependencies
 markdown:         redcarpet
-highlighter:      pygments
-
+#highlighter:      pygments
+highlighter:       rouge
 # Permalinks
 permalink:        pretty
 #relative_permalinks: true
 
 # Setup
 title:            RainHu
-tagline:          'Life is simple'
-description:      'To learn,  To understand'
+#tagline:          'Life is simple'
+description:      'Life is simple'
 url:              https://github.com/rainhu
 baseurl:          /
 
