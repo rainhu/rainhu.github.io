@@ -4,18 +4,17 @@ title: This is my first blog
 ---
 坚持！加油！
 
-{% hightlight java %}
+{% highlight java %}
 if(int i=0;i<1;i++){
     a++;
 }
 
-{% endhightlight %}
+{% endhighlight %}
 
 
 ```java
 if(int i=0;i<1;i++){
     a++;
 }
-
 
 ```
