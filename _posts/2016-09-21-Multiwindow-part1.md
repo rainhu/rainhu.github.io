@@ -33,4 +33,3 @@ PackageManager#FEATURE_FREEFORM_WINDOW_MANAGEMENT并满足config_freeformWindowM
 3. 画中画(Picture-in-picture)
 在满足屏幕分割的要求以后，还需要满足PackageManager#FEATURE_PICTURE_IN_PICTURE
 
-
