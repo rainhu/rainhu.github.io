@@ -1,27 +1,5 @@
-# Dependencies
-markdown:         kramdown
-#highlighter:      pygments
-highlighter:       rouge
-# Permalinks
-permalink:        pretty
-#relative_permalinks: true
-
-# Setup
-title:            RainHu
-tagline:          'Come On'
-description:      'Life Is Simple'
-url:              https://github.com/rainhu
-baseurl:          /
-
-author:
-  name:           'Rain Hu'
-  url:            https://github.com/rainhu
-  email:          zhengyu_hu@163.com
-
-paginate:         5
-
-# Custom vars
-version:          0.0.1
-
-github:
-  repo:           https://github.com/rainhu
+# General Jekyll Config
+highlighter: pygments
+url: http://example.com
+lsi: false
+exclude: [LICENSE, CNAME, README.md, .gitignore, Gemfile, Gemfile.lock]
