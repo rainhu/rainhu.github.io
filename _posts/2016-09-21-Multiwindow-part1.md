@@ -25,13 +25,14 @@ categories:
 1. 启用屏幕分割(split-screen)模式
 如果需要启用多窗口，需要在frameworks/base/core/res/res/values/config.xml 中设置参数config_supportsMultiWindow = true ，但是如果声明了low_ram为true，则这个flag无效。
 
-```
+{% highlight java %}
 ActivityManager.supportsMultiWindow(){  
   return !isLowRamDeviceStatic()  
           && Resources.getSystem().getBoolean(  
              com.android.internal.R.boolen.config_supportsMultiWindow);  
 }  
-```
+{% endhighlight %}
+
 2. 启用自由模式(Freeform)
 除了要满足上面屏幕分割的条件，还需要启用
 PackageManager#FEATURE_FREEFORM_WINDOW_MANAGEMENT并满足config_freeformWindowManagement 为true
