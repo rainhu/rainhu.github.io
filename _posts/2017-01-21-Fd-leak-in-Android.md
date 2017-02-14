@@ -1,8 +1,7 @@
 ---
 layout: post
 title: Fd leak in Android
-categories:
-- blog
+category: stability
 ---
 ## 背景
 FD（File Descriptor）文件描述符在形式上是非负整数，它是一个索引值，指向内核为每个进程所维护的该进程打开文件的记录表。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。在Linux系统中，一切设备都视作文件，文件描述符为Linux平台设备相关的编程提供了一个统一的方法。
@@ -33,23 +32,24 @@ Android应用可能会需要很多资源，像输入输出流，数据库资源C
 输入输出流的使用在任何程序中都会比较频繁，像FileInputStream，FileOutputStream，FileReader，FileWriter 等输入输出如果不断创建但是不及时关闭，不仅可能造成内存的泄露了也可能会造成FD的溢出。每次new一个FileInputStream、FileOutputStream 都会在进程中创建一个FD， 用来指向这个打开的文件，而如果反复执行下面的代码，FD文件会持续不断地增加，直至超过1024出现FC。
 
 {% highlight java %}
-String filename = prefix + “temp”;  
-File file = new File(getCache(),fileName);  
-try{  
-    file.createNewFile();  
-    FileOutputStream out = new FileOutputStream(file);  
-} catch (FileNotFoundException e){ 
+String filename = prefix + "temp";
+File file = new File(getCache(),fileName);
+try{
+    file.createNewFile();  
+    FileOutputStream out = new FileOutputStream(file);
+} catch (FileNotFoundException e){ 
 
-} catch (IOException e){
+} catch (IOException e){
 
-} 
+}
 
 {% endhighlight %}
 
 在/proc/${进程id}/fd/ 目录下执行ls –l查看到增加的FD指向创建的文件，这里创建了不同的file，即使是对同一个文件，也会创建多个FD来指向这个打开的文件流。
 
-> lr-x------ u0_a86   u0_a86            2015-06-20 01:25 80 -> /data/data/com.example.hu.memleakdemo/cache/48temp  
-> lr-x------ u0_a86   u0_a86            2015-06-20 01:25 81 -> /data/data/com.example.hu.memleakdemo/cache/49temp  
+<pre>
+lr-x------ u0_a86   u0_a86            2015-06-20 01:25 80 -> /data/data/com.example.hu.memleakdemo/cache/48temp  
+lr-x------ u0_a86   u0_a86            2015-06-20 01:25 81 -> /data/data/com.example.hu.memleakdemo/cache/49temp  
 lr-x------ u0_a86   u0_a86            2015-06-20 01:25 82 -> /data/data/com.example.hu.memleakdemo/cache/50temp  
 lr-x------ u0_a86   u0_a86            2015-06-20 01:25 83 -> /data/data/com.example.hu.memleakdemo/cache/51temp  
 lr-x------ u0_a86   u0_a86            2015-06-20 01:25 84 -> /data/data/com.example.hu.memleakdemo/cache/52temp  
@@ -58,6 +58,7 @@ lr-x------ u0_a86   u0_a86            2015-06-20 01:25 86 -> /data/data/com.exam
 lr-x------ u0_a86   u0_a86            2015-06-20 01:25 87 -> /data/data/com.example.hu.memleakdemo/cache/55temp  
 lr-x------ u0_a86   u0_a86            2015-06-20 01:25 88 -> /data/data/com.example.hu.memleakdemo/cache/56temp  
 lr-x------ u0_a86   u0_a86            2015-06-20 01:25 89 -> /data/data/com.example.hu.memleakdemo/cache/57temp  
+</pre>
 
 最终导致应用进程出现FC，并打出如下的Log， 表示这个进程FD数量已经到达了上限，无法再创建新的FD，只有终止进程。
 
@@ -69,59 +70,62 @@ lr-x------ u0_a86   u0_a86            2015-06-20 01:25 89 -> /data/data/com.exam
 正确的做法是能够在final中将流进行关闭,这样无论中途是否出现异常导致程序中断，都会将流顺利关闭。
 
 {% highlight java %}
-String filename = prefix + “temp”; 
-File file = new File(getCache(),fileName);  
-try{  
-    file.createNewFile();  
-    FileOutputStream out = new FileOutputStream(FileDescriptor. file );  
-  }catch(Exception e){  
+String filename = prefix + "temp";
+File file = new File(getCache(),fileName);  
+try{  
+    file.createNewFile();  
+    FileOutputStream out = new FileOutputStream(FileDescriptor. file );  
+  }catch(Exception e){  
 }
-final{  
-    if(out != null){  
-      out.close();  
-    }  
- }  
+final{  
+    if(out != null){  
+      out.close();  
+    }  
+ }  
  {% endhighlight %}
 
 #### Cursor leak
 与输入输出相似，数据库查询的Cursor如果没有及时进行Close，也会出现FD泄漏的情况。
 如下面这段异常的Log:
 
-> AndroidRuntime: FATAL EXCEPTION: IntentService[ContactSaveService]   
-> AndroidRuntime: Process: com.android.contacts,  
-> AndroidRuntime: android.database.sqlite.SQLiteException: unable to open database file (code 14)   
-> AndroidRuntime:     at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:179)   
-> AndroidRuntime:     at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:135)   
-> AndroidRuntime:     at android.content.ContentProviderProxy.delete(ContentProviderNative.java:544)   
-> AndroidRuntime:     at android.content.ContentResolver.delete(ContentResolver.java:1330)   
-> AndroidRuntime:     at com.android.contacts.ContactSaveService.saveContact(ContactSaveService.java:478)   
-> AndroidRuntime:     at com.android.contacts.ContactSaveService.onHandleIntent(ContactSaveService.java:222)   
-> AndroidRuntime:     at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:66)   
-> AndroidRuntime:     at android.os.Handler.dispatchMessage(Handler.java:102)   
-> AndroidRuntime:     at android.os.Looper.loop(Looper.java:148)   
-> AndroidRuntime:     at android.os.HandlerThread.run(HandlerThread.java:61)  
-
+<pre>
+AndroidRuntime: FATAL EXCEPTION: IntentService[ContactSaveService]   
+AndroidRuntime: Process: com.android.contacts,  
+AndroidRuntime: android.database.sqlite.SQLiteException: unable to open database file (code 14)   
+AndroidRuntime:     at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:179)   
+AndroidRuntime:     at android.database.DatabaseUtils.readExceptionFromParcel(DatabaseUtils.java:135)   
+AndroidRuntime:     at android.content.ContentProviderProxy.delete(ContentProviderNative.java:544)   
+AndroidRuntime:     at android.content.ContentResolver.delete(ContentResolver.java:1330)   
+AndroidRuntime:     at com.android.contacts.ContactSaveService.saveContact(ContactSaveService.java:478)   
+AndroidRuntime:     at com.android.contacts.ContactSaveService.onHandleIntent(ContactSaveService.java:222)   
+AndroidRuntime:     at android.app.IntentService$ServiceHandler.handleMessage(IntentService.java:66)   
+AndroidRuntime:     at android.os.Handler.dispatchMessage(Handler.java:102)   
+AndroidRuntime:     at android.os.Looper.loop(Looper.java:148)   
+AndroidRuntime:     at android.os.HandlerThread.run(HandlerThread.java:61)  
+</pre>
 
 这个问题是在Stability测试环境下出现的，由于未能够在Cursor使用后及时进行关闭，最终出现了FD的溢出。
 从上面FC的Log可以看到，异常出现在ContentProvider跨进程传递传递的时候，出现了异常，显示无法打开database文件。看到unable to open database file，大胆地猜测是否是出现了FD的泄漏。然后在Log中找到了下面这段，确定了是FD泄漏造成了这次的FC。
 
-> E/JavaBinder( 3319): java.lang.RuntimeException: Could not write CursorWindow to Parcel due to error -24.  
-> E/JavaBinder( 3319): at android.database.CursorWindow.nativeWriteToParcel(Native Method)  
-> E/JavaBinder( 3319): at android.database.CursorWindow.writeToParcel(CursorWindow.java:705)  
+<pre>
+E/JavaBinder( 3319): java.lang.RuntimeException: Could not write CursorWindow to Parcel due to error -24.  
+E/JavaBinder( 3319): at android.database.CursorWindow.nativeWriteToParcel(Native Method)  
+E/JavaBinder( 3319): at android.database.CursorWindow.writeToParcel(CursorWindow.java:705)  
 E/JavaBinder( 3319): at android.database.BulkCursorDescriptor.writeToParcel(BulkCursorDescriptor.java:63)  
 E/JavaBinder( 3319): at android.content.ContentProviderNative.onTransact(ContentProviderNative.java:127)  
 E/JavaBinder( 3319): at android.os.Binder.execTransact(Binder.java:453)  
+</pre>
 
 而对于Cursor没有及时关闭这个问题，下面这种情况很容易造成开发者的疏忽，导致出现问题：
 
 {% highlight java %}
-public void problemMethod() {  
-    Cursor cursor = query(); // 假设 query() 是一个查询数据库返回 Cursor 结果的函数   
- if (flag == false) {  // 出现了提前返回
-        return;  
-    }  
-    cursor.close();  
-}  
+public void problemMethod() {  
+    Cursor cursor = query(); // 假设 query() 是一个查询数据库返回 Cursor 结果的函数   
+ if (flag == false) {  // 出现了提前返回
+        return;  
+    }  
+    cursor.close();  
+} 
 {% endhighlight %}
 
 ### 2.Thread related
@@ -129,13 +133,14 @@ public void problemMethod() {  
 #### HandlerThread
 下面这段异常Log是在Monkey测试中出现的，所以没有明确的操作步骤，测试脚本提取的crash堆栈如下，显示的是无法分配JNI资源，看上去是一个典型了内存泄漏问题。
 
-> 12-28 21:35:21.571 E/AndroidRuntime(11308): FATAL EXCEPTION: main  
+<pre>
+12-28 21:35:21.571 E/AndroidRuntime(11308): FATAL EXCEPTION: main  
 12-28 21:35:21.571 E/AndroidRuntime(11308): Process: com.tct.fmradio, PID: 11308  
 12-28 21:35:21.571 E/AndroidRuntime(11308): java.lang.OutOfMemoryError: Could not allocate JNI Env  
 12-28 21:35:21.571 E/AndroidRuntime(11308): at java.lang.Thread.nativeCreate(Native Method)  
 12-28 21:35:21.571 E/AndroidRuntime(11308): at java.lang.Thread.start(Thread.java:1063)  
 12-28 21:35:21.571 E/AndroidRuntime(11308): at com.tct.fmradio.platform.QcomFMDeviceImpl.createRecordSinkThread(QcomFMDeviceImpl.java:391)  
-12-28 21:35:21.571 E/AndroidRuntime(11308): at com.tct.fmradio.platform.QcomFMDeviceImpl.<init>(QcomFMDeviceImpl.java:295)  
+12-28 21:35:21.571 E/AndroidRuntime(11308): at com.tct.fmradio.platform.QcomFMDeviceImpl.&lt;init>(QcomFMDeviceImpl.java:295)  
 12-28 21:35:21.571 E/AndroidRuntime(11308): at com.tct.fmradio.device.FMDeviceImpl.createFMDevice(FMDeviceImpl.java:18)  
 12-28 21:35:21.571 E/AndroidRuntime(11308): at com.tct.fmradio.service.FMService.onCreate(FMService.java:1231)  
 12-28 21:35:21.571 E/AndroidRuntime(11308): at android.app.ActivityThread.handleCreateService(ActivityThread.java:2918)  
@@ -149,41 +154,44 @@ public void problemMethod() {  
 12-28 21:35:21.571 E/AndroidRuntime(11308): at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:616)  
 12-28 21:35:21.572 I/ActivityManager( 6054): handleApplicationCrash  
 12-28 21:35:21.572 I/JRDRecordService( 6054): jrdCrashHandler invoke ytf...  
+</pre>
 
 但是在查看Log以后，在前面找到了下面的Log，发现原来是FD发生了泄漏。具体表现为打开FMRadio后，点击Recent按键500～600次， /proc/<FMRADIO所在进程>/fd/目录下fd文件数量不断增长，直到超过1024阀值发生FC.
 
-> 12-28 21:35:21.569 E/art (11308): ashmem_create_region failed for 'indirect ref table': Too many open files
+<pre>
+12-28 21:35:21.569 E/art (11308): ashmem_create_region failed for 'indirect ref table': Too many open files
 12-28 21:35:21.570 W/art (11308): Throwing OutOfMemoryError "Could not allocate JNI Env"
 12-28 21:35:21.570 D/AndroidRuntime(11308): Shutting down VM
-12-28 21:35:21.571 W/Adreno-GSL(11308): <gsl_ldd_control:475>: ioctl fd 31 code 0xc0200933 (IOCTL_KGSL_TIMESTAMP_EVENT) failed: errno 24 Too many open files
-12-28 21:35:21.571 W/Adreno-GSL(11308): <ioctl_kgsl_syncobj_create:2979>: (20, 7, 46028) fail 24 Too many open files
+12-28 21:35:21.571 W/Adreno-GSL(11308): &lt;gsl_ldd_control:475>: ioctl fd 31 code 0xc0200933 (IOCTL_KGSL_TIMESTAMP_EVENT) failed: errno 24 Too many open files
+12-28 21:35:21.571 W/Adreno-GSL(11308): &lt;ioctl_kgsl_syncobj_create:2979>: (20, 7, 46028) fail 24 Too many open files
+</pre>
 
 此问题为FM有一个Service 在每次oncreate都会创建一个handlerthread，并且没有释放，而通过Recent方式会反复的调用这个service的oncreate代码，造成了泄漏。
 
 {% highlight java %}
-public void onCreate() {  
-  Log.i(TAG, "onCreate()");  
-  super.onCreate();  
-  mDefaultName = getString(R.string.default_name_text);  
-  // create a thread that messages will be processed on  
-  new HandlerThread("FMService");  
-  thread.start();  
-  mMessenger = new FMMessenger(thread.getLooper(), mOnActionListener,null, null);  
-  .... ...  
-}  
+public void onCreate() {  
+  Log.i(TAG, "onCreate()");  
+  super.onCreate();  
+  mDefaultName = getString(R.string.default_name_text);  
+  // create a thread that messages will be processed on  
+  new HandlerThread("FMService");  
+  thread.start();  
+  mMessenger = new FMMessenger(thread.getLooper(), mOnActionListener,null, null);  
+  .... ...  
+}  
 {% endhighlight %}
 
 通过在onDestroy添加下面语句，即可释放handlerthread所占用的句柄
 {% highlight java %}
-mHandlerThread.quitSafely(); 
+mHandlerThread.quitSafely(); 
 {% endhighlight %}
 
 在Android中使用线程，尤其是HandlerThread要尤其的谨慎，必须要确保创建HandlerThread的函数不会被反复的调用导致线程反复的被创建。
 如果循环调用下面这段代码几百次，就会出现FD泄漏。
 
 {% highlight java %}
-HandlerThead handerThread = new HandlerThead(“test”);  
-handlerThead.start();  
+HandlerThead handerThread = new HandlerThead("test");  
+handlerThead.start();  
 {% endhighlight %}
 
 在不需要线程Loop的时候调用HandlerThead.quitSafely()或者HandlerThead.quit();销毁loop,释放句柄资源。
@@ -191,15 +199,15 @@ handlerThead.start();  
 #### Thread
 HandlerThread实际上是带有Loop的thread，而对于传统的Java Thread，需要声明Loop以后才会出现FD的增加。因为声明Loop相当于增加了一块缓冲区，需要有一个FD来标识。如果反复调用下面这段代码也会出现FD泄漏。
 {% highlight java %}
-Thread thread = new Thread (new Runnable(){  
-    @Override  
-    public void run(){  
-    Looper.prepare();  
-    // do things  
-    Looper.loop();  
-}  
-});  
-thread.start();  
+Thread thread = new Thread (new Runnable(){  
+    @Override  
+    public void run(){  
+    Looper.prepare();  
+    // do things  
+    Looper.loop();  
+}  
+});  
+thread.start();  
 {% endhighlight %}
 
 如果确定不需要Looper，可以使用Looper.quit()或者Looper.quitSafely()来退出looper，避免出现FD泄漏。
@@ -210,7 +218,7 @@ thread.start();  
 公司的同一个手机项目的的stability测试中，出现了两个crash的log，堆栈几乎完全不一样，但是后面发现原来都是没有及时调用WindowManager.removeView造成的。
 第一份log如下：
 
-> 
+<pre>
 process:com.android.systemui  
 Crash happen at 2016-07-07 19:15:48  
 process:com.android.systemui  
@@ -251,6 +259,7 @@ java.lang.RuntimeException: Could not read input channel file descriptors from p
     at java.lang.reflect.Method.invoke(Native Method)  
     at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:726)  
     at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:616)  
+</pre>
 
 
 可以看到上面的Log是在Parcel传递的时候出现了异常。这个Bug问题出在没有能够处理好onConfigurationChanged中的代码。
@@ -260,7 +269,7 @@ WindowManager.addView每次调用，都会在server（WindowManagerService）和
 
 而第二份crash的log如下：
 
->
+<pre>
 pid:2494
 Classname:java.lang.RuntimeException  
 Filename:Bitmap.java  
@@ -274,8 +283,8 @@ java.lang.RuntimeException: Could not allocate dup blob fd.
     at android.graphics.Bitmap$1.createFromParcel(Bitmap.java:1516)  
     at android.graphics.Bitmap$1.createFromParcel(Bitmap.java:1508)  
     at android.app.ActivityManager$TaskThumbnail.readFromParcel(ActivityManager.java:1390)  
-    at android.app.ActivityManager$TaskThumbnail.<init>(ActivityManager.java:1411)  
-    at android.app.ActivityManager$TaskThumbnail.<init>(ActivityManager.java:1359)  
+    at android.app.ActivityManager$TaskThumbnail.&it;init>(ActivityManager.java:1411)  
+    at android.app.ActivityManager$TaskThumbnail.&it;init>(ActivityManager.java:1359)  
     at android.app.ActivityManager$TaskThumbnail$1.createFromParcel(ActivityManager.java:1403)  
     at android.app.ActivityManager$TaskThumbnail$1.createFromParcel(ActivityManager.java:1401)  
     at android.app.ActivityManagerProxy.getTaskThumbnail(ActivityManagerNative.java:3367)  
@@ -293,13 +302,14 @@ java.lang.RuntimeException: Could not allocate dup blob fd.
     at java.lang.reflect.Method.invoke(Native Method)  
     at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:726)  
     at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:616)  
+</pre>
 
 这份Log很容易让人误以为是Binder传递了过大的Bitmap导致的异常。而这个Bug的问题出在没有处理好ActivityManagerProxy.getTaskThumbnail 的代码。
 ActivityManagerProxy.getTaskThumbnail会在不断地点击Recents按键的时候被反复调用。而ActivityManagerProxy.getTaskThumbnail需要创建一个Parcel与ActivityManagerService通信，这时候就会创建一个FD指向Socket的端口，如果此时发现FD已经满了就会报出异常。
 
 所以两个问题确实是属于同一个问题，都属于FD泄漏。我们在两份Log中到找到了如下的Log：
 
->
+<pre>
 2016-07-28 08:39:22,956 : 07-28 08:39:21.856 E/Parcel ( 2490): dup() failed in Parcel::read, i is 1, fds[i] is -1, fd_count is 2, error: Too many open files  
 2016-07-28 08:39:22,956 : 07-28 08:39:21.856 E/Surface ( 2490): dequeueBuffer: IGraphicBufferProducer::requestBuffer failed: -22  
 2016-07-28 08:39:22,956 : 07-28 08:39:21.857 I/Adreno ( 2490): DequeueBuffer: dequeueBuffer failed  
@@ -313,12 +323,13 @@ ActivityManagerProxy.getTaskThumbnail会在不断地点击Recents按键的时候
 2016-07-28 08:39:22,956 : 07-28 08:39:21.858 E/Surface ( 2490): dequeueBuffer: IGraphicBufferProducer::requestBuffer failed: -22  
 2016-07-28 08:39:22,972 : 07-28 08:39:21.858 I/Adreno ( 2490): DequeueBuffer: dequeueBuffer failed  
 2016-07-28 08:39:31,458 : 07-28 08:39:30.356 E/InputChannel-JNI( 2490): Error 24 dup channel fd 1015.  
+</pre>
 
 #### Multi-Task
 
 一台手机在跑Monkey的时候出现的这个问题，错误的堆栈信息如下，看着堆栈，挂在了native层， abort message 发现原来是FD文件超了
 
->
+<pre>
 07-14 23:40:49.781 F/libc    (10511): Fatal signal 6 (SIGABRT), code -6 in tid 10511 (m.android.email)  
 07-14 23:40:49.838 F/DEBUG   (  747): *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***  
 07-14 23:40:49.838 F/DEBUG   (  747): Build fingerprint: 'Vertu/VM-08/tron:6.0.1/6.0.1_0.184.0.032/china_032:user/release-keys'  
@@ -348,15 +359,16 @@ ActivityManagerProxy.getTaskThumbnail会在不断地点击Recents按键的时候
 07-14 23:40:49.898 F/DEBUG   (  747):     #07 pc 0000000000000f74  /system/vendor/lib64/libqti-perfd-client.so (mpctl_send+1048)  
 07-14 23:40:49.898 F/DEBUG   (  747):     #08 pc 0000000000000fec  /system/lib64/libqti_performance.so  
 07-14 23:40:49.898 F/DEBUG   (  747):     #09 pc 0000000000004968  /system/framework/oat/arm64/QPerformance.odex (offset 0x4000)  
+</pre>
 
 
 我们发现问题出在如下的代码上：
 
 {% highlight java %}
-if (action == COMPOSE) {  
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);  
-} else if (message != null) { 
-    
+if (action == COMPOSE) {  
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);  
+} else if (message != null) { 
+    
 }
 {% endhighlight %}
 
@@ -364,10 +376,10 @@ if (action == COMPOSE) {  
 实际上，通过反复如下代码就会出现这个问题：
 
 {% highlight java %}
-Intent intent = new Intent();  
-Intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);  
-Intent.setClass(MainActivity.this, SecondActivity.class);  
-startActivity(intent);  
+Intent intent = new Intent();  
+Intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);  
+Intent.setClass(MainActivity.this, SecondActivity.class);  
+startActivity(intent);  
 {% endhighlight %}
 
 应用的input event由WindowManagerService管理，WMS内部会创建一个InputManager，两者通过InputChannel来完成，WMS需要注册两个InputChannel与InputManager连接，其中Server端InputChannel注册在InputManager（SystemServer），Client端注册在应用程序主线程中。InputChannel使用Ashmem匿名共享内存来传递数据，它由一个fd文件描述符指向，同时read端和write端各占用一个fd。创建一个新的Task时， server(system_server)和client(app)都会构建FD。

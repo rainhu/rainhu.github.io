@@ -1,1 +1,1 @@
-https://rainhu.github.io/
+rainhu.github.io
