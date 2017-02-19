@@ -31,7 +31,7 @@ Android应用可能会需要很多资源，像输入输出流，数据库资源C
 
 输入输出流的使用在任何程序中都会比较频繁，像FileInputStream，FileOutputStream，FileReader，FileWriter 等输入输出如果不断创建但是不及时关闭，不仅可能造成内存的泄露了也可能会造成FD的溢出。每次new一个FileInputStream、FileOutputStream 都会在进程中创建一个FD， 用来指向这个打开的文件，而如果反复执行下面的代码，FD文件会持续不断地增加，直至超过1024出现FC。
 
-{% highlight java %}
+{% highlight java linenos%}
 String filename = prefix + "temp";
 File file = new File(getCache(),fileName);
 try{
@@ -69,7 +69,7 @@ lr-x------ u0_a86   u0_a86            2015-06-20 01:25 89 -> /data/data/com.exam
 
 正确的做法是能够在final中将流进行关闭,这样无论中途是否出现异常导致程序中断，都会将流顺利关闭。
 
-{% highlight java %}
+{% highlight java linenos %}
 String filename = prefix + "temp";
 File file = new File(getCache(),fileName);  
 try{  
@@ -118,7 +118,7 @@ E/JavaBinder( 3319): at android.os.Binder.execTransact(Binder.java:453)
 
 而对于Cursor没有及时关闭这个问题，下面这种情况很容易造成开发者的疏忽，导致出现问题：
 
-{% highlight java %}
+{% highlight java linenos%}
 public void problemMethod() {  
     Cursor cursor = query(); // 假设 query() 是一个查询数据库返回 Cursor 结果的函数   
  if (flag == false) {  // 出现了提前返回
@@ -168,7 +168,7 @@ public void problemMethod() {
 
 此问题为FM有一个Service 在每次oncreate都会创建一个handlerthread，并且没有释放，而通过Recent方式会反复的调用这个service的oncreate代码，造成了泄漏。
 
-{% highlight java %}
+{% highlight java linenos %}
 public void onCreate() {  
   Log.i(TAG, "onCreate()");  
   super.onCreate();  
@@ -182,7 +182,7 @@ public void onCreate() {
 {% endhighlight %}
 
 通过在onDestroy添加下面语句，即可释放handlerthread所占用的句柄
-{% highlight java %}
+{% highlight java linenos %}
 mHandlerThread.quitSafely(); 
 {% endhighlight %}
 
@@ -198,7 +198,7 @@ handlerThead.start();
 
 #### Thread
 HandlerThread实际上是带有Loop的thread，而对于传统的Java Thread，需要声明Loop以后才会出现FD的增加。因为声明Loop相当于增加了一块缓冲区，需要有一个FD来标识。如果反复调用下面这段代码也会出现FD泄漏。
-{% highlight java %}
+{% highlight java linenos %}
 Thread thread = new Thread (new Runnable(){  
     @Override  
     public void run(){  
@@ -364,7 +364,7 @@ ActivityManagerProxy.getTaskThumbnail会在不断地点击Recents按键的时候
 
 我们发现问题出在如下的代码上：
 
-{% highlight java %}
+{% highlight java linenos %}
 if (action == COMPOSE) {  
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);  
 } else if (message != null) { 
@@ -375,7 +375,7 @@ if (action == COMPOSE) {
 写一封新邮件,startactivity 使用的flag是multiTask，也就是说，每点击创建新的邮件，都会创建task。而Monkey在跑的时候创建了n个邮件的task， 而对应打开的ComposeActivityEmail.java 的 “插入快速语” 会创建很多个fd , 最终导致FD超过1024， 进程崩溃。
 实际上，通过反复如下代码就会出现这个问题：
 
-{% highlight java %}
+{% highlight java linenos %}
 Intent intent = new Intent();  
 Intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);  
 Intent.setClass(MainActivity.this, SecondActivity.class);  

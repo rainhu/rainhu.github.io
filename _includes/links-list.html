@@ -1,7 +1,9 @@
-<h1>Links</h1>
+<h1>Categories</h1>
+{% for category in site.categories %}
+
 <ul>
-  <li><a href="#">One</a></li>
-  <li><a href="#">Two</a></li>
-  <li><a href="#">Three</a></li>
-  <li><a href="#">Four</a></li>
+     {% for post in category.last %}
+    <li><a href="{{ site.baseurl }}/category.html?category={{category.first}}">{{category.first}}（{{category.last.size}}）</a></li>
+     {% endfor %}
 </ul>
+{% endfor %}
