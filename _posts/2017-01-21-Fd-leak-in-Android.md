@@ -3,7 +3,6 @@ layout: post
 title: Fd leak in Android
 category: stability
 ---
-## 背景
 FD（File Descriptor）文件描述符在形式上是非负整数，它是一个索引值，指向内核为每个进程所维护的该进程打开文件的记录表。当程序打开一个现有文件或者创建一个新文件时，内核向进程返回一个文件描述符。在Linux系统中，一切设备都视作文件，文件描述符为Linux平台设备相关的编程提供了一个统一的方法。
  
 在stability测试的过程中，经常会出现许多FD泄漏导致的莫名其妙的FC，而crash的堆栈也是千奇百怪，
