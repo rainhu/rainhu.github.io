@@ -4,7 +4,6 @@ title: Multiwindow in Android N (１)
 #data: YYYY-MM-DD HH:MM:SS
 category: framework
 ---
-## 背景
 　　Android N 引入了一个新的功能叫做多窗口支持(Multi-Window)，可以使多个Activity同时展现在屏幕上，并且可以在两个Activity之间通过拖拽的方式进行交互。具体包括三个功能点：屏幕分割(Split-screen)，自由模式（Freeform），画中画(Picture-in-picture)
 
 ### 屏幕分割(Split-screen)
