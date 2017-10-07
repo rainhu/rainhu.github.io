@@ -1,73 +1,59 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
 
-# url is currently only used only for the RSS feed in feed.xml
-url: https://scotte.github.io/jekyll-clean
+# Site settings
+title: Ryan
+brief-intro: Software Engineer
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "https://gaohaoyang.github.io" # the base hostname & protocol for your site
 
-# baseurl will often be '', but for a project page on gh-pages, it needs to
-# be the project name.
-# *** IMPORTANT: If your local "jekyll serve" throws errors change this to '' or
-#     run it like so: jekyll serve --baseurl=''
-#baseurl: "/jekyll-clean"
-#baseurl: ''
+permalink: /:year/:month/:day/:title/
 
-# Set this to your UA-# value, or '' to disable the block completely
-gaaccount: ''
+# other links
+#twitter_username: 
+#facebook_username: 
+github_username:  rainhu
+email: zhengyu_hu@163.com
+#weibo_username: 
+#zhihu_username: 
+#linkedIn_username: 
+dribbble_username:
 
-# The 'comments' setting enables comments. You'll need to select either
-# disqus or isso below to choose a comment system. Individual posts can
-# override 'comments' to disable on a post-by-post basis.
-comments: true
+description_footer: Life is Simple！
 
-# Set this to your public isso URL to enable comments via isso. Set to '' to disable isso.
-isso: ''
+# comments
+# two ways to comment, only choose one, and use your own short name
+# 两种评论插件，选一个就好了，使用自己的 short_name
+disqus_shortname: Ryan
 
-# Set this to your disqus shortname to enable comments via disqus. Set to '' to disable disqus.
-disqus: ''
+# statistic analysis 统计代码
+# 百度统计 id，将统计代码替换为自己的百度统计id，即
+# hm.src = "//hm.baidu.com/hm.js?xxxxxxxxxxxx";
+# xxxxx字符串
+baidu_tongji_id: 1fe4322ec784a0fda05d04704496cfcf
+google_analytics_id: UA-107728859-1 # google 分析追踪id
 
+# Build settings
+markdown: kramdown
 
-#目录结构
-source:      .
-destination: ./_site
-plugins:     ./_plugins
-layouts:     ./_layouts
-data_source: ./_data
-collections: null
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
 
-# 阅读处理
-safe:         false
-include:      [".htaccess"]
-exclude:      ['README.md', 'LICENSE']
-keep_files:   [".git", ".svn"]
-encoding:     "utf-8"
-markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+# port
+# port: 1234
 
+# url
+category_dir: category/
+tag_dir: tag/
 
-# 内容过滤
-show_drafts: null
-limit_posts: 0
-future:      true
-unpublished: false
+# excerpt
+excerpt_separator: "\n\n\n\n"
 
-# 插件
-whitelist: []
-gems: ['jekyll-paginate']
-
-# 转换
-markdown:    kramdown
-highlighter: rouge
-lsi:         false
-excerpt_separator: "\n\n"  #表示以\n\n为界生成摘要
-incremental: false
-
-# 服务器选项
-detach:  false
-port:    4000
-host:    127.0.0.1
-baseurl: "" # does not include hostname
-
-# 输出
-permalink:     /:year/:month/:title
-timezone:      null
-
-#分页
-paginate: 3 #后面的数字表示该页展示多少篇文章
-paginate_path: /page:num
+# paginate
+gems: [jekyll-paginate]
+paginate: 6

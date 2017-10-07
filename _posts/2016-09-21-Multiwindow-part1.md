@@ -1,10 +1,17 @@
 ---
 layout: post
 title: Multiwindow in Android N (１)
-#data: YYYY-MM-DD HH:MM:SS
-category: framework
+categories: framework
+tags: multi-window android_n
 ---
+
+* content
+{:toc}
+
 　　Android N 引入了一个新的功能叫做多窗口支持(Multi-Window)，可以使多个Activity同时展现在屏幕上，并且可以在两个Activity之间通过拖拽的方式进行交互。具体包括三个功能点：屏幕分割(Split-screen)，自由模式（Freeform），画中画(Picture-in-picture)
+
+
+
 
 ### 屏幕分割(Split-screen)
 这个功能是多窗口的基本体现方式，屏幕被均分同时显示两个Activity，这两个Activity可以来自不同的应用，也可以来自同一个应用。
@@ -24,13 +31,13 @@ category: framework
 1. 启用屏幕分割(split-screen)模式
 如果需要启用多窗口，需要在frameworks/base/core/res/res/values/config.xml 中设置参数config_supportsMultiWindow = true ，但是如果声明了low_ram为true，则这个flag无效。
 
-{% highlight Java linenos %}
+```java
 ActivityManager.supportsMultiWindow(){
     return !isLowRamDeviceStatic()
          && Resources.getSystem().getBoolean(
            com.android.internal.R.boolen.config_supportsMultiWindow);
 }
-{% endhighlight %}
+```
 
 2. 启用自由模式(Freeform)
 除了要满足上面屏幕分割的条件，还需要启用
