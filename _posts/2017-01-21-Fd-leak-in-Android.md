@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Fd leak in Android
-categoryies: framework
+categories: framework
 tags: FD stability
 ---
 
