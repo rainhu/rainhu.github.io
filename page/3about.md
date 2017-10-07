@@ -6,9 +6,6 @@ icon: heart
 type: page
 ---
 
-* content
-{:toc}
-
 ## 关于我
 Android开发工程师，侧重Android Framework层的开发与Debug
 
