@@ -1,6 +1,9 @@
+---
+layout: post
 title: Adb device no permission的原因和解决方法
 categories: common
 tags: adb tools
+---
 
 * content
 {:toc}
