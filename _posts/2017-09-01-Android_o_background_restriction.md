@@ -2,6 +2,8 @@
 layout: post
 title: Android O 后台限制的行为变更
 categories: android_o
+published: true
+tags: android_o
 ---
 
 * content
