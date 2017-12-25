@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Fd leak in Android
-categories: framework
-tags: FD stability
+title: Adb device no permission的原因和解决方法
+categories: common
+tags: adb tools
 ---
 
 * content
