@@ -10,8 +10,7 @@ published: true
 {:toc}
 
 Ubuntu连上Android手机之后，调用adb devices出现如下的错误
-![问题描述](https://github.com/rainhu/rainhu.github.io/raw/master/_assets/1.png)\
-
+![问题描述](https://github.com/rainhu/rainhu.github.io/raw/master/_assets/1.png)
 ### 原因
 
 lsusb查看usb设备是否已经连上，确定其已经连上ubuntu系统，且挂在在bus 001上且device Id = 095
@@ -43,7 +42,7 @@ SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", MODE="0666", GROUP="plugdev"
 Bus 002 Device 002: ID 2109:8110 VIA Labs, Inc. Hub    
 Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub    
 Bus 001 Device 003: ID 2109:2811 VIA Labs, Inc. Hub    
-Bus 001 Device 014: ID <font color=yellow>0e8d</font>:201d MediaTek Inc.     
+Bus 001 Device 014: ID <font color=blue>0e8d</font>:201d MediaTek Inc.     
 Bus 001 Device 005: ID 04b4:4042 Cypress Semiconductor Corp.    
 Bus 001 Device 004: ID 0bda:0157 Realtek Semiconductor Corp. Mass Storage Device   
 Bus 001 Device 002: ID 17ef:6019 Lenovo     
