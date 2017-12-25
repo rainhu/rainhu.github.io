@@ -3,12 +3,11 @@ layout: post
 title: Adb device no permission的原因和解决方法
 categories: common
 tags: adb tools
+published: true
 ---
 
 * content
 {:toc}
-
-### 背景介绍
 
 Ubuntu连上usb之后，调用adb devices出现如下的错误
 ![问题描述](https://github.com/rainhu/rainhu.github.io/raw/master/_assets/1.png)
