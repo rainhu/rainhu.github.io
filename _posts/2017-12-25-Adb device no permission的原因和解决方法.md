@@ -1,13 +1,22 @@
+---
+layout: post
+title: Fd leak in Android
+categories: framework
+tags: FD stability
+---
+
+* content
+{:toc}
+
 ### 背景介绍
 
 Ubuntu连上usb之后，调用adb devices出现如下的错误
-![]({{site.baseurl}}/https://github.com/rainhu/rainhu.github.io/raw/master/_assets/1.png)
-
+![问题描述](https://github.com/rainhu/rainhu.github.io/raw/master/_assets/1.png)
 ### 原因
 
 lsusb查看usb设备是否已经连上，确定其已经连上ubuntu系统，且挂在在bus 001上且device Id = 095
 那么通过ls –al /dev/bus/usb/001/095查看这个设备的使用权限。发现root用户才可以读写，所以在普通用户状态下调用adb devices会出现没有权限的情况
-![]({{site.baseurl}}/https://github.com/rainhu/rainhu.github.io/raw/master/_assets/2.png)
+![原因分析](https://github.com/rainhu/rainhu.github.io/raw/master/_assets/2.png)
 
 ###解决方案
 ####临时解决方案
