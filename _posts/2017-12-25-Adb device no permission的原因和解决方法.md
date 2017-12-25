@@ -37,12 +37,12 @@ a）添加udev规则
 sudo vi /etc/udev/rules.d/51-android.rules  
 添加下面   
 SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", MODE="0666", GROUP="plugdev"   
-其中idVendor通过lsusb获取，下面黄色部分就是要填的值   
+其中idVendor通过lsusb获取，下面"0e8d"就是要填的值   
  
 Bus 002 Device 002: ID 2109:8110 VIA Labs, Inc. Hub    
 Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub    
 Bus 001 Device 003: ID 2109:2811 VIA Labs, Inc. Hub    
-Bus 001 Device 014: ID <font color=blue>0e8d</font>:201d MediaTek Inc.     
+Bus 001 Device 014: ID **0e8d**:201d MediaTek Inc.     
 Bus 001 Device 005: ID 04b4:4042 Cypress Semiconductor Corp.    
 Bus 001 Device 004: ID 0bda:0157 Realtek Semiconductor Corp. Mass Storage Device   
 Bus 001 Device 002: ID 17ef:6019 Lenovo     
