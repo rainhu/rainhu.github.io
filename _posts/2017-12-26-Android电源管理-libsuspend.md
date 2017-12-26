@@ -12,10 +12,14 @@ tags: power libsuspend
 本文基于Android 7.1  
 相关源码路径  
 /framework/base/services/core/jni/com_android_server_PowerManagerService.cpp  
-/system/core/libsuspend/*  
+/system/core/libsuspend/autosuspend_wakeup_count.c
+/system/core/libsuspend/debugger.c
+
 
 ### 关于libsuspend
-libsuspend的作用是接收JNI的调用，在合适的时候往/sys/power/state节点写mem来控制Android系统进入suspend的状态
+libsuspend的作用是接收JNI的调用，在合适的时候往/sys/power/state节点写mem来控制Android系统进入suspend的状态。
+
+
 
 
 
@@ -31,12 +35,7 @@ mmm framework/base/service/
 3）将变更push到手机端，是的修改生效
 adb root  
 adb remount  
-adb sync system  
-
-
-
-
-
+adb sync system
 
 
 
