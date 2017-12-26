@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 layout: post
 categories: framework
 tags: power libsuspend
