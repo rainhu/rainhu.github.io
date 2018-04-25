@@ -7,6 +7,9 @@ tags: debug tools
 * content
 {:toc}
 
+> 本文记录在工作中所用到的一些常见的命令使用和Debug方式
+
+
 ### Logcat
 
 在eng下调试Camera时候使用adb logcat出现如下的错误
