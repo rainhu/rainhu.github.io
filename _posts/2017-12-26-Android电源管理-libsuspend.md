@@ -3,6 +3,7 @@ published: true
 layout: post
 categories: framework
 tags: power libsuspend
+comments: true
 ---
 
 * content
@@ -36,7 +37,3 @@ mmm framework/base/service/
 adb root   
 adb remount    
 adb sync system  
-
-
-
-

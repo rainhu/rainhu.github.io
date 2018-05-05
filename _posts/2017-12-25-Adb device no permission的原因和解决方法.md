@@ -4,6 +4,7 @@ title: Adb device no permission的原因和解决方法
 categories: common
 tags: adb tools
 published: true
+comments: true
 ---
 
 * content
@@ -23,7 +24,7 @@ lsusb查看usb设备是否已经连上，确定其已经连上ubuntu系统，且
 ![原因分析](https://github.com/rainhu/rainhu.github.io/raw/master/_assets/2.png)
 
 ### 解决方案
-#### 临时解决方案 
+#### 临时解决方案
 a) 将adb放到/user/bin/adb  
 b) sudo –s 切换到root用户  
 c) adb kill-server;  
@@ -32,13 +33,13 @@ c) adb kill-server;
 
 
 #### 永久性解决方案
-a）添加udev规则 
+a）添加udev规则
 通过添加udev规则让普通用户也能访问。   
 sudo vi /etc/udev/rules.d/51-android.rules  
 添加下面   
 SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", MODE="0666", GROUP="plugdev"   
 其中idVendor通过lsusb获取，下面"0e8d"就是要填的值   
- 
+
 Bus 002 Device 002: ID 2109:8110 VIA Labs, Inc. Hub    
 Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub    
 Bus 001 Device 003: ID 2109:2811 VIA Labs, Inc. Hub    
@@ -47,12 +48,12 @@ Bus 001 Device 005: ID 04b4:4042 Cypress Semiconductor Corp.
 Bus 001 Device 004: ID 0bda:0157 Realtek Semiconductor Corp. Mass Storage Device   
 Bus 001 Device 002: ID 17ef:6019 Lenovo     
 Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub   
- 
+
 b)重启udev服务   
 sudo udevadm control --reload-rules  
 sudo service udev restart   
- 
- 
+
+
 c)重启adb server   
 sudo adb kill-server   
 sudo adb start-server   

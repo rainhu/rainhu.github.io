@@ -3,6 +3,7 @@ layout: post
 title: Fd leak in Android
 categories: framework
 tags: FD stability
+comments: true
 ---
 
 * content
@@ -45,7 +46,7 @@ File file = new File(getCache(),fileName);
 try{
     file.createNewFile();  
     FileOutputStream out = new FileOutputStream(file);
-} catch (FileNotFoundException e){ 
+} catch (FileNotFoundException e){
 
 } catch (IOException e){
 
@@ -128,7 +129,7 @@ public void problemMethod() {
         return;  
     }  
     cursor.close();  
-} 
+}
 ```
 
 ### 2.Thread related
@@ -184,7 +185,7 @@ public void onCreate() {
 
 通过在onDestroy添加下面语句，即可释放handlerthread所占用的句柄
 ```java
-mHandlerThread.quitSafely(); 
+mHandlerThread.quitSafely();
 ```
 
 在Android中使用线程，尤其是HandlerThread要尤其的谨慎，必须要确保创建HandlerThread的函数不会被反复的调用导致线程反复的被创建。
@@ -368,8 +369,8 @@ ActivityManagerProxy.getTaskThumbnail会在不断地点击Recents按键的时候
 ```java
 if (action == COMPOSE) {  
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT | Intent.FLAG_ACTIVITY_MULTIPLE_TASK);  
-} else if (message != null) { 
-    
+} else if (message != null) {
+
 }
 ```
 

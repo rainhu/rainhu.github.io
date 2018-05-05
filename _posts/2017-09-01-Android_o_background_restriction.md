@@ -4,6 +4,7 @@ title: Android O 后台限制的行为变更
 categories: android_o
 published: true
 tags: android_o
+comments: true
 ---
 
 * content
@@ -64,7 +65,7 @@ Google建议采用下面两种方式
 
 而Android O在Android N的基础上，进一步对隐式广播进行了限制，
 - 声明targetSdkVersion >= 26 的app将不能够在manifest中注册隐式广播
-- 
+-
 
 > 什么是隐式广播(implicit broadcast)？
 > 这里我们说的广播，无论是显式的还是隐式的，都是Android系统发出来的广播。这些广播可以分为两种，一种是显式广播(explicit broadcast)，一种是隐式广播(implicit broadcast)。如果有 App 安装了新版本，那么ACTION_PACKAGE_REPLACED将会发送给所有注册了此广播的 App，而不是某一个指定的 App，所以我们称它为隐式广播；而像ACTION_MY_PACKAGE_REPLACED这样的只会发送到指定App的，称为显式广播。
@@ -87,7 +88,7 @@ PackageManagerService.java
 
         am.broadcastIntent(null, intent, null,         finishedReceiver,0, null, null, null,android.app.AppOpsManager.OP_NONE,
         null, finishedReceiver != null, false, id);
-} 
+}
 ```
 在Android O中，并非所有的隐式广播都不允许在manifest中注册，下面这些广播是必不可少被允许注册：  
 - ACTION_LOCKED_BOOT_COMPLETED, ACTION_BOOT_COMPLETED
