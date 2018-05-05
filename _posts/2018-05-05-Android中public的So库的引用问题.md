@@ -4,6 +4,7 @@ title: Android中public的So库的引用问题
 categories: framework
 tags: cts debug so
 published: true
+comments: true
 ---
 * content
 {:toc}
@@ -98,9 +99,9 @@ PRODUCT_COPY_FILES += $(LOCAL_PATH)/etc/public.libraries.txt:$(TARGET_COPY_OUT_V
 1)在/etc/public.libraries.txt出现  
 2)在/vender/etc/public.libraries.txt出现  
 
-那么这两个文件是什么时候被加载的呢？ 
+那么这两个文件是什么时候被加载的呢？
 >/system/core/libnativeloader/native_loader.cpp
-/art/runtime/java_vm_ext.cc 
+/art/runtime/java_vm_ext.cc
 /system/core/libnativeloader/native_loader.cpp
 
 系统在初始化的时候就会通过LibraryNamespaces#Initialize去加载这两个文件
