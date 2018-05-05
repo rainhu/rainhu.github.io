@@ -14,13 +14,13 @@ url: "huzhengyu.com" # the base hostname & protocol for your site
 permalink: /:year/:month/:day/:title/
 
 # other links
-#twitter_username: 
-#facebook_username: 
+#twitter_username:
+#facebook_username:
 github_username:  rainhu
 email: zhengyu_hu@163.com
-#weibo_username: 
-#zhihu_username: 
-#linkedIn_username: 
+#weibo_username:
+#zhihu_username:
+#linkedIn_username:
 dribbble_username:
 
 description_footer: Life is Simple！
@@ -28,7 +28,7 @@ description_footer: Life is Simple！
 # comments
 # two ways to comment, only choose one, and use your own short name
 # 两种评论插件，选一个就好了，使用自己的 short_name
-disqus_shortname: Ryan
+disqus_shortname: huzhengyu
 
 # statistic analysis 统计代码
 # 百度统计 id，将统计代码替换为自己的百度统计id，即
@@ -41,7 +41,7 @@ google_analytics_id: UA-107728859-1 # google 分析追踪id
 markdown: kramdown
 
 kramdown:
-  input: GFM
+  input: GFM # 没有这个配置 代码块不会生效
   syntax_highlighter: rouge
 
 # port
