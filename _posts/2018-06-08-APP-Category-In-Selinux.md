@@ -17,7 +17,12 @@ Selinux在Android M之后被要求强制开启，主要用来描述一些domain�
 
 ### Selinux中APP的domain
 abd shell之后通过ps -AZ查看进程  
-![进程详情](../_assets/2018-06-08/process.png)
+![进程详情](https://github.com/rainhu/rainhu.github.io/blob/master/_assets/2018-06-08/process.png)
+
+
+
+
+
 第一列为Selinux中的SContext, 第二列为UID，uid=system为system_app
 U0_xxx要么属于platform_app，priv-app,untrusted_app  
 一个uid可以属于多个进程
@@ -64,7 +69,7 @@ UID是PackageManagerService在启动的时候从AndroidManifest中的shareduserI
 下面是shareduserId初始化的过程：  
 
 
-```Java
+```java
 1--> 将android.uid.system,android.uid.phone等，system.,phone,log,nfc,bluetooth,shell这几个uid都会添加package的Flag为ApplicationInfo.FLAG_SYSTEM和private的flag为ApplicationInfo.PRIVATE_FLAG_PRIVILEGED
 这两个flag会被用来判断是否是属于系统应用以及高优先级的应用，之前讲过的不能引用非公开so库的普通应用就不会带有FLAG_SYSTEM的标志，且会安装到data分区而不是system分区
         public boolean isSystemApp() {
@@ -135,7 +140,7 @@ private boolean addUserIdLPw(int uid, Object obj, Object name) {
 
 
 
-```Java
+```java
 2-->遍历Android中所安装的app，按照vendor/overlay, framwork, system/priv-app, system/app,vendor/app的顺序进行遍历
 
 framework/base/services/core/java/com/android/oserver/pm/PackageManagerService.java
@@ -181,7 +186,7 @@ framework/base/services/core/java/com/android/oserver/pm/PackageManagerService.j
 ## 关于seinfo的读取
 PackageManagerService会在系统初始化或者应用安装的时候通过调用scanPackageDirtyLi将seinfo从/etc/selinux/plat_mac_permissions.xml和/etc/selinux/nonplat_mac_permissions.xml读取出来，然后比对解析每个package的签名进行相应的seinfo的赋值，将数据存储在每个应用的Application#seInfo中  
 
-```Java
+```java
 private PackageParser.Package scanPackageDirtyLI(PackageParser.Package pkg,
          final int policyFlags, final int scanFlags, long currentTime, @Nullable UserHandle user)throws PackageManagerException {
           ... ...
@@ -205,7 +210,7 @@ private PackageParser.Package scanPackageDirtyLI(PackageParser.Package pkg,
 >那么/etc/selinux/plat_mac_permissions.xml和/etc/selinux/nonplat_mac_permissions.xml是如何生成的呢？
 
 通过查看/system/sepolicy/Android.mk
-```Makefile
+```
 ##################################
 #system/sepolicy/private/mac_permissions.xml输出到/etc/selinux/plat_mac_permissions.xml作为system相关的policy规则，对于Vendor，可以在下面目录下定义mac_permissions.xml：$(PLAT_VENDOR_POLICY) $(BOARD_SEPOLICY_DIRS) $(REQD_MASK_POLICY) ，自定义的mac_permissions.xml会输出到/etc/selinux/nonplat_mac_permissions.xml作为vendor相关的policy规则
 ##################################
@@ -227,7 +232,7 @@ all_plat_mac_perms_files := $(call build_policy, mac_permissions.xml, $(PLAT_PRI
 ```
 所以在aosp上，seinfo由决定system/sepolicy/private/mac_permissions.xml，如果签名是platform的(LOCAL_CERTIFICATE=platform)，则seinfo=platform  
 
-```XML
+```xml
 <policy>   
  <!-- Platform dev key in AOSP -->
     <signer signature="@PLATFORM" >
