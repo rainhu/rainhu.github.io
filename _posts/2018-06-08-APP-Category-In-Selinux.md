@@ -17,7 +17,7 @@ Selinux在Android M之后被要求强制开启，主要用来描述一些domain�
 
 ### Selinux中APP的domain
 abd shell之后通过ps -AZ查看进程  
-![进程详情](https://github.com/rainhu/rainhu.github.io/blob/master/_assets/2018-06-08/process.png)
+![进程详情](https://raw.githubusercontent.com/rainhu/rainhu.github.io/master/_assets/2018-06-08/process.png)
 
 
 
