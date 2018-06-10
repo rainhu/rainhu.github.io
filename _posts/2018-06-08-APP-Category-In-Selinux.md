@@ -17,7 +17,7 @@ Selinux在Android M之后被要求强制开启，主要用来描述一些domain�
 
 ### Selinux中APP的domain
 abd shell之后通过ps -AZ查看进程  
-![进程详情](https://github.com/rainhu/rainhu.github.io/blob/master/_assets/2018-06-08/process.png)
+![进程详情](https://github.com/rainhu/rainhu.github.io/blob/master/assets/2018-06-08/process.png)
 
 
 
@@ -68,18 +68,15 @@ UID是PackageManagerService在启动的时候从AndroidManifest中的shareduserI
 
 下面是shareduserId初始化的过程：  
 
-
+1--> 将android.uid.system,android.uid.phone等，system.,phone,log,nfc,bluetooth,shell这几个uid都会添加package的Flag为ApplicationInfo.FLAG_SYSTEM和private的flag为ApplicationInfo.PRIVATE_FLAG_PRIVILEGED  
+这两个flag会被用来判断是否是属于系统应用以及高优先级的应用，之前讲过的不能引用非公开so库的普通应用就不会带有FLAG_SYSTEM的标志，且会安装到data分区而不是system分区  
+        public boolean isSystemApp() {  
+             return (flags & ApplicationInfo.FLAG_SYSTEM) != 0;  
+         }  
+         public boolean isPrivilegedApp() {  
+             return (privateFlags & ApplicationInfo.PRIVATE_FLAG_PRIVILEGED) != 0;  
+         }  
 ```java
-1--> 将android.uid.system,android.uid.phone等，system.,phone,log,nfc,bluetooth,shell这几个uid都会添加package的Flag为ApplicationInfo.FLAG_SYSTEM和private的flag为ApplicationInfo.PRIVATE_FLAG_PRIVILEGED
-这两个flag会被用来判断是否是属于系统应用以及高优先级的应用，之前讲过的不能引用非公开so库的普通应用就不会带有FLAG_SYSTEM的标志，且会安装到data分区而不是system分区
-        public boolean isSystemApp() {
-             return (flags & ApplicationInfo.FLAG_SYSTEM) != 0;
-         }
-
-         public boolean isPrivilegedApp() {
-             return (privateFlags & ApplicationInfo.PRIVATE_FLAG_PRIVILEGED) != 0;
-         }
-
 framework/base/services/core/java/com/android/oserver/pm/PackageManagerService.java         
 public PackageManagerService(Context context, Installer installer,
           boolean factoryTest, boolean onlyCore) {
@@ -98,10 +95,11 @@ mSettings.addSharedUserLPw("android.uid.bluetooth", BLUETOOTH_UID,
 mSettings.addSharedUserLPw("android.uid.shell", SHELL_UID,
         ApplicationInfo.FLAG_SYSTEM, ApplicationInfo.PRIVATE_FLAG_PRIVILEGED);
          ... ...
-
+```
 
 1.1-->继续上面的上面的addSharedUserLPw的流程,SharedUser的信息会存在mSharedUsers这个map中，其中key   为"android.uid.system"之类，value则为SharedUserSetting对象
 
+```java
 /frameworks/base/services/core/java/com/android/server/pm/Settings.java
 SharedUserSetting addSharedUserLPw(String name, int uid, int pkgFlags, int pkgPrivateFlags) {
     SharedUserSetting s = mSharedUsers.get(name);
@@ -114,8 +112,10 @@ SharedUserSetting addSharedUserLPw(String name, int uid, int pkgFlags, int pkgPr
     }
     return null;
 }
+```
 
 1.1.1-> 继续上面addUserIdLPw的流程，最终将系统级别的uid信息存储在mOtherUserIds中，而普通应用级别的uid存储在mUserIds中
+```java
 private boolean addUserIdLPw(int uid, Object obj, Object name) {
      ... ...
      /*
@@ -139,10 +139,8 @@ private boolean addUserIdLPw(int uid, Object obj, Object name) {
 ```
 
 
-
-```java
 2-->遍历Android中所安装的app，按照vendor/overlay, framwork, system/priv-app, system/app,vendor/app的顺序进行遍历
-
+```java
 framework/base/services/core/java/com/android/oserver/pm/PackageManagerService.java
       ... ...
       // Collected privileged system packages.
@@ -178,8 +176,6 @@ framework/base/services/core/java/com/android/oserver/pm/PackageManagerService.j
 2.1.1.1.1 --> scanPackageInternalLI
 2.1.1.1.2 --> scanPackageLI (六个参数，其中userHandler != null)
 2.1.1.1.2.1 -->scanPackageDirtyLI()
-
-
 
 ```
 
