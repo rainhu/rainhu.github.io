@@ -10,8 +10,8 @@ comments: true
 {:toc}
 
 > 本文基于MTK平台的Android8.1进行分析  
-Selinux在Android M之后被要求强制开启，主要用来描述一些domain对系统中的资源，如文件、socket之类的访问的限制。而在Android系统中，Application中的应用根据一些条件被分为了好几类domain。
-在开发的过程中会遇到很多APP的权限问题，有些app能够访问节点的节点却不能被某些app却不能，就是因为这些app所属于的SELinux domain不同。
+Selinux在Android M之后被要求强制开启，主要用来描述一些domain对系统中的资源，如文件、系统属性，socket之类的访问的限制。而在Android系统中，Application中的应用根据一些条件被分为了好几类domain。
+在开发的过程中会遇到有些APP不能读写系统属性，有些app能够访问节点的节点却不能被某些app却不能，就是因为这些app所属于的SELinux domain不同。
 本文将会对这些进行介绍。
 
 
@@ -185,7 +185,7 @@ private PackageParser.Package scanPackageDirtyLI(PackageParser.Package pkg,
                     throws PackageManagerException {
      ... ...
 
-     //从前面序列1的调用逻辑已经知道，系统的sharedUserId会存储在mSharedUserId中，而通过调用mSettings.getSharedUserLPw如果这个package的 pkg.mSharedUserId不在前面的列表之中，则会创建一个新的sharedUserId，也就是说如果这个package在AndroidManefest.xml中定义了类似mSharedUserId="com.ryan.test"的shareduserid，就会在下面的函数中进行添加。
+     //从前面序列1的调用逻辑已经知道，系统的sharedUserId会存储在mSharedUserId中，而通过调用mSettings.getSharedUserLPw如果这个package的 pkg.mSharedUserId不在前面的列表之中，则会创建一个新的sharedUserId，也就是说如果这个package在AndroidManefest.xml中定义了类似mSharedUserId="com.ryan.test"的shareduserid，就会在下面的函数中进行添加，并通过Settings#newUserIdLPw创建系统uid之外的shareduserid。
      synchronized (mPackages) {
          if (pkg.mSharedUserId != null) {
              // SIDE EFFECTS; may potentially allocate a new shared user
@@ -195,8 +195,7 @@ private PackageParser.Package scanPackageDirtyLI(PackageParser.Package pkg,
 
     ... ...
 
-    //从mPackages中获取参数信息，查看此包名的pkgSetting是否存在，查看其sharedUser是否发生了变更。PackageManagerService会在前面通过mSettings.readLPw(sUserManager.getUsers(false)将system/packages.xml中的信息读取出来，存到mPackages中，如果这里不存在这个mPackage，说明这个应用是新安装的，而不是预制在系统里面的。
-
+    //从mPackages中获取参数信息，查看此包名的pkgSetting是否存在，查看其sharedUser是否发生了变更，如果发生了变更，则重新pkgSettings清空。PackageManagerService会在前面通过mSettings.readLPw(sUserManager.getUsers(false)将data/system/packages.xml中的信息读取出来，存到mPackages中，如果这里不存在这个mPackage，说明这个应用是新安装或者更新过的，而不是预制在系统里面的。
      pkgSetting = mSettings.getPackageLPr(pkg.packageName);
          if (pkgSetting != null && pkgSetting.sharedUser != suid) {
              pkgSetting = null;
@@ -300,7 +299,7 @@ all_plat_mac_perms_files := $(call build_policy, mac_permissions.xml, $(PLAT_PRI
 2.system_app  
 3.platform_app  
 4.untrusted_app  
-他们的权限也就是访问特定文件的权限都是定义在对应的**.te下的，如priv_app.te。不同selinux domain类别的应用限制了对文件节点、socket之类的访问。
+他们的权限也就是访问特定文件的权限都是定义在对应的**.te下的，如priv_app.te。不同selinux domain类别的应用限制了对文件节点、系统属性、socket之类的访问。
 
 
 而systemapp，privileged app的分类是相对于Android Framework 来说，应用的分类可以从/frameworks/base/core/java/android/content/pm/ApplicationInfo.java的一些方法看出来
