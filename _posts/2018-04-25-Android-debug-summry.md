@@ -31,20 +31,20 @@ $ adb logcat | tee a.txt
 
 
 ### 代码调试生效
-a)修改了Framework代码之后，快速刷入到手机的方式  
+a)修改了Framework代码之后，快速刷入到手机的方式    
 $ adb remount；  
 $ cd <ProjectHome>;  
-$ adb sync system;  
-$ adb reboot;  
+$ adb sync system;   
+$ adb reboot;   
 
 b)编译某个模块，快速输入到手机  
 前提需要一次整编  
-$ cd <ProjectHome>;  
+$ cd <ProjectHome>;   
 $ . build/envsetup.sh; lunch <ProjectName>; (只要在开始的时候执行一次就可以了)  
-$ mmm packages/apps/Calendar/  
-$ adb remount;  
-$ adb push out/target/producr/<ProjactName>system/app/Calendar/Calendat.apk system/app/Calendar/Calendat.apk  
-$ adb reboot 生效
+$ mmm packages/apps/Calendar/   
+$ adb remount;   
+$ adb push out/target/producr/<ProjactName>system/app/Calendar/Calendat.apk system/app/Calendar/Calendat.apk   
+$ adb reboot 生效  
 
 ### 截屏
 $ adb shell screencap $(filename)   
@@ -55,10 +55,14 @@ $ adb shell screenrecord [options] filename
 $ adb shell screen --verbose /sdcard/demo.mp4
 
 ### am命令
-发送广播改变电池电量和温度
-$ adb shell am broadcast -a android.intent.action.BATTERY_CHANGED –ei temperature 300 –ei level 50   
+发送广播改变电池电量和温度  
+$ adb shell am broadcast -a android.intent.action.BATTERY_CHANGED –ei temperature 300 –ei level 50 //新Android版本貌似已经不能用
 
-启动activity
+可以用下面的方式设置电量
+让手机电量显示百分百： adb shell dumpsys battery set level 100  
+让手机电量显示1： adb shell dumpsys battery set level 1  
+
+启动activity  
 $ adb shell am start-activity com.android.calculator2/com.android.calculator2.Calculator .
 
 ### pm命令
@@ -77,6 +81,7 @@ $ adb pull /tmp/file.txt /home/file.txt 将手机tmp目录下file.txt复制到PC
 $ adb shell service list 列出所有系统服务
 然后通过dumpsys media.camera 打印media.camera服务的信息  
 
+$ adb shell dumpsys meminfo 打印内存信息
 $ adb shell dumpsys SurfaceFlinger 显示当前应用的包名    
 $ adb shell dumpsys activity  
 $ adb shell dumpsys cpuinfo CPU  
@@ -85,6 +90,8 @@ $ adb shell dumpsys window（最后部分可以看到分辨率的信息）
 有些service能够接收额外的参数，我们可以使用-h查看帮助信息。   
 $ adb shell dumpsys package -h  
 $ adb shell dumpsys activity -h  
+  如adb shell dumpsys activity o 能够输出oom的值
+    adb shell dumpsys activity p 能够打印运行中的进程
 
 ### 查找文本内容
 $ grep -r "adb"
