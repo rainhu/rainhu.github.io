@@ -33,7 +33,7 @@ c) adb kill-server;
 
 
 #### 永久性解决方案
-a）添加udev规则
+a）添加udev规则 (在ubuntu 1404版本可用)
 通过添加udev规则让普通用户也能访问。   
 sudo vi /etc/udev/rules.d/51-android.rules  
 添加下面   
@@ -48,6 +48,11 @@ Bus 001 Device 005: ID 04b4:4042 Cypress Semiconductor Corp.
 Bus 001 Device 004: ID 0bda:0157 Realtek Semiconductor Corp. Mass Storage Device   
 Bus 001 Device 002: ID 17ef:6019 Lenovo     
 Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub   
+
+>update 2018-06-12  
+听说ubuntu 1604版本的规则还需要加一个owner才能生效  
+SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="201c", MODE="0600", OWNER="Ubuntu-User-name"
+
 
 b)重启udev服务   
 sudo udevadm control --reload-rules  
