@@ -51,7 +51,8 @@ Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 
 >update 2018-06-12  
 听说ubuntu 1604版本的规则还需要加一个owner才能生效  
-SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="201c", MODE="0600", OWNER="Ubuntu-User-name"
+SUBSYSTEM=="usb", ATTR{idVendor}=="0e8d", ATTR{idProduct}=="201c", MODE="0600",   
+OWNER="Ubuntu-User-name"
 
 
 b)重启udev服务   
