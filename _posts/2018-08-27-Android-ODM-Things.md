@@ -11,8 +11,6 @@ comments: true
 
 > 本文基于Android 8.1平台进行分析
 
-
-
 ### 设置系统默认语言
 device\公司名字\项目名字\full_项目名字.mk
 
@@ -26,6 +24,11 @@ en_US es_ES ru_RU pt_BR fr_FR hi_IN ur_PK bn_IN ar_EG fa_IR
 就是buildinfo.sh的ro.product.locale.language变量，修改默认的为自己的国家语言代码即可
 
 默认的语言最终会存储在ro.product.locale中
+
+
+
+
+
 
 ### 序列号问题
    systemproperty中gsm.serial，通过getprop可以获取
