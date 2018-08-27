@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Android.mk实战
+title: Android.mk常用指南
 categories: build
 tags: makefile
 published: true
@@ -13,6 +13,12 @@ comments: true
 
 
 Android.mk对于熟悉Android源码的人来说并不陌生，虽然Google开始逐步用Android.bp来替换Android.mk，但是其实质并没有发生什么变化，只是又在Android.mk的基础上又封装了一层。  
+
+
+
+
+
+
 
 ### 静态库与动态库
 程序要运行一般会经过编译->链接->加载->运行的过程，在链接过程中连接器将从库文件取得所需的代码，复制到生成的可执行文件中，这样的库称为静态；
