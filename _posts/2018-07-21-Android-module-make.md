@@ -3,13 +3,13 @@ layout: post
 title: Android.mk实战
 categories: build
 tags: makefile
-published: false
-comments: false
+published: true
+comments: true
 ---
 * content
 {:toc}
 
-> 本文基于Android O平台
+> 本文基于Android O平台进行分析
 
 
 Android.mk对于熟悉Android源码的人来说并不陌生，虽然Google开始逐步用Android.bp来替换Android.mk，但是其实质并没有发生什么变化，只是又在Android.mk的基础上又封装了一层。  
@@ -172,9 +172,6 @@ LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := libmyjavalib:libs/myjavalib.jar
 LOCAL_PREBUILT_LIBS :=libmymodule:libs/libmymodule.so
 LOCAL_MODULE_TAGS := optional
 include $(BUILD_MULTI_PREBUILT)
-
-# Use the following include to make our testapk.
-include $(callall-makefiles-under,$(LOCAL_PATH))
 ```
 
 
