@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Android ODM 常见定制化需求
-categories: build
-tags: makefile
+categories: odm
+tags: odm
 published: true
 comments: true
 ---
