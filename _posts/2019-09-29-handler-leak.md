@@ -11,18 +11,20 @@ comments: true
 {:toc}
 
 
->使用下面的方式定义一个Handler，AndroidStudio会弹出提醒，表示可能存在内存泄漏的风险。
+>本文从AndroidStudio的Lint对Handler的警告入手，初步窥探Handler不恰当定义可能引起的内存泄漏的原因
 
-
-
-
-![](../_assets/2019-09-29/Handler内存泄漏.png)
+使用下面的方式定义一个Handler，AndroidStudio会弹出提醒，表示可能存在内存泄漏的风险。
+![](https://raw.githubusercontent.com/rainhu/rainhu.github.io/master/_assets/2019-09-29/Handler%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F.png)
 
 Lint的提示信息翻译如下：
 
 > Handler被声明为内部类，可能会阻止外部类被回收。如果Handler不是使用主线程中的Looper或者MessageQueue，那么就没有此问题。但是如果Handler使用的是主线程的Looper或者MessageQueue，那么需要将其作为一个静态类，并在Handler初始化的时候将外部类实例对象以弱引用的方式传递给Handler
 
 在理解上面这段话之前，我们先来看下外部类和内部类的一些信息。
+
+
+
+
 
 #### 外部类和内部类
 
@@ -148,7 +150,7 @@ class com.ryan.handlerdemo.MainActivity$2 extends android.os.Handler
 
 如下图所示，在重复打开应用、然后按Back键退出几十次以后，内存中MainActivty的对象存在了44个
 
-![](../_assets/2019-09-29/Memory_leak.png)
+![](https://raw.githubusercontent.com/rainhu/rainhu.github.io/master/_assets/2019-09-29/Memory_leak.png)
 
 
 
@@ -177,7 +179,7 @@ do
 
 他们当然不会无线增长，当Java堆，Native堆，栈等超出预定的阀值的时候，内存泄露就出现了。在执行上面的脚本过程中，就出现了如下的Java堆和栈溢出的情况，如果MainActivity中有Native层的调用，文件的输入输出，也很容易出现Native堆的溢出，FD的溢出。
 
-![FC](../_assets/2019-09-29/FC.png)
+![FC](https://raw.githubusercontent.com/rainhu/rainhu.github.io/master/_assets/2019-09-29/FC.png)
 
 ##### Java堆溢出
 
