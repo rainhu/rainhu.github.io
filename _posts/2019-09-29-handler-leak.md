@@ -63,7 +63,7 @@ public class Outer$Inner
 
 AndroidStudio 3.4版本在build之后，会将编译生成的class文件放在下面路径中
 
-<工程根目录>/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/<包名>
+工程根目录/app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/包名
 
 ```java
 public class MainActivity extends AppCompatActivity {
@@ -169,7 +169,7 @@ Profiler运行之后切换到Memory页面，工具会检测应用关于下面指
 ```shell
 #! /bin/bash
 while true
-do 
+do
   adb shell am start-activity com.ryan.handlerdemo/.MainActivity ;   
   adb shell input keyevent KEYCODE_BACK;
  done
@@ -270,4 +270,3 @@ private static class MyHandler extends Handler {
 //创建Handler时候把外部实例传递进去
 Handler myHandler = new MyHandler(this);
 ```
-
