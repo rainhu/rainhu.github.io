@@ -91,19 +91,7 @@ drwxr-xr-x   4 Ryan  staff    128  9 27 21:33 ..
 -rw-r--r--   1 Ryan  staff    685  9 27 21:31 MainActivity$2.class
 -rw-r--r--   1 Ryan  staff   1493  9 27 21:31 MainActivity.class
 -rw-r--r--   1 Ryan  staff    870  9 27 21:31 R$anim.class
--rw-r--r--   1 Ryan  staff  14534  9 27 21:31 R$attr.class
--rw-r--r--   1 Ryan  staff    523  9 27 21:31 R$bool.class
--rw-r--r--   1 Ryan  staff   4877  9 27 21:31 R$color.class
--rw-r--r--   1 Ryan  staff   6811  9 27 21:31 R$dimen.class
--rw-r--r--   1 Ryan  staff   5688  9 27 21:31 R$drawable.class
--rw-r--r--   1 Ryan  staff   5512  9 27 21:31 R$id.class
--rw-r--r--   1 Ryan  staff    633  9 27 21:31 R$integer.class
--rw-r--r--   1 Ryan  staff   2364  9 27 21:31 R$layout.class
--rw-r--r--   1 Ryan  staff    448  9 27 21:31 R$mipmap.class
--rw-r--r--   1 Ryan  staff   2621  9 27 21:31 R$string.class
--rw-r--r--   1 Ryan  staff  21753  9 27 21:31 R$style.class
--rw-r--r--   1 Ryan  staff  39081  9 27 21:31 R$styleable.class
--rw-r--r--   1 Ryan  staff    955  9 27 21:31 R.class
+...
 ```
 
 通过javap命令查看发现
