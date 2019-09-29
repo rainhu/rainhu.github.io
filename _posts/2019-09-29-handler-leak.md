@@ -187,7 +187,7 @@ adb shell getprop | grep dalvik
 
 查看每个进程最大的堆栈可以是多少，
 
-[dalvik.vm.heapsize]: 384m
+dalvik.vm.heapsize: 384m
 
 如下就是超过了384M堆栈内存以后爆出的异常信息
 
