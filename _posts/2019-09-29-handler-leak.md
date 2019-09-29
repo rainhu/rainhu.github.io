@@ -11,7 +11,7 @@ comments: true
 {:toc}
 
 
->本文从AndroidStudio的Lint对Handler的警告入手，初步窥探Handler不恰当定义可能引起的内存泄漏的原因
+>本文从AndroidStudio的Lint对Handler的警告入手，初步窥探Handler不恰当定义可能引起的内存泄漏的原因,不涉及Handler的实现原理分析.
 
 使用下面的方式定义一个Handler，AndroidStudio会弹出提醒，表示可能存在内存泄漏的风险。
 ![](https://raw.githubusercontent.com/rainhu/rainhu.github.io/master/_assets/2019-09-29/Handler%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F.png)
@@ -191,17 +191,21 @@ adb shell getprop | grep dalvik
 
 如下就是超过了384M堆栈内存以后爆出的异常信息
 
-```HTML
 D/AndroidRuntime(15204): Shutting down VM
-E/AndroidRuntime(15204): FATAL EXCEPTION: main
-E/AndroidRuntime(15204): Process: com.ryan.handlerdemo, PID: 15204
-E/AndroidRuntime(15204): java.lang.OutOfMemoryError: Failed to allocate a 335544336 byte allocation with 6291456 free bytes and 142MB until OOM, max allowed footprint 259283456, growth limit 402653184
-E/AndroidRuntime(15204): 	at java.util.Arrays.copyOf(Arrays.java:3260)
-E/AndroidRuntime(15204): 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:125)
-E/AndroidRuntime(15204): 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:451)
-E/AndroidRuntime(15204): 	at java.lang.StringBuilder.append(StringBuilder.java:137)
 
-```
+E/AndroidRuntime(15204): FATAL EXCEPTION: main
+
+E/AndroidRuntime(15204): Process: com.ryan.handlerdemo, PID: 15204
+
+E/AndroidRuntime(15204): java.lang.OutOfMemoryError: Failed to allocate a 335544336 byte allocation with 6291456 free bytes and 142MB until OOM, max allowed footprint 259283456, growth limit 402653184
+
+E/AndroidRuntime(15204): 	at java.util.Arrays.copyOf(Arrays.java:3260)
+
+E/AndroidRuntime(15204): 	at java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:125)
+
+E/AndroidRuntime(15204): 	at java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:451)
+
+E/AndroidRuntime(15204): 	at java.lang.StringBuilder.append(StringBuilder.java:137)
 
 
 
