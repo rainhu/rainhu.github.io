@@ -33,16 +33,18 @@ frameworks/base/services/core/java/com/android/server/lights/LightsManager.java
 
 
 每种ID的灯的详情如下
-| 名称       | Light ID               | 对应节点文件    | 执行函数(lights.c)      | 备注                                                         |
-| :--------- | :--------------------- | :-------------- | ----------------------- | :----------------------------------------------------------- |
-| 背光灯     | LIGHT_ID_BACKLIGHT     | LCD_FILE        | set_light_backlight     | 背光灯，只操作亮度                                           |
-| 键盘灯     | LIGHT_ID_KEYBOARD      | KEYBOARD_FILE   | set_light_keyboard      | 键盘灯，只操作亮/灭                                          |
-| 按键灯     | LIGHT_ID_BUTTONS       | BUTTON_FILE     | set_light_buttons       | 按键灯（经常和上面是同一个灯）                               |
-| 充电指示灯 | LIGHT_ID_BATTERY       | red, blue,green | set_light_battery       | 一般跟通知灯是同一个，只能在BatteryService中调用             |
+| 名称       | Light ID | 对应节点文件    | 执行函数(lights.c)      | 备注                    |
+| :--------- | :--------------------- | :-------------- | :----------------------- | :----------------------------------------------------------- |
+| 背光灯     | LIGHT_ID_BACKLIGHT     | LCD_FILE        | set_light_backlight     | 背光灯，只操作亮度    |
+| 键盘灯     | LIGHT_ID_KEYBOARD      | KEYBOARD_FILE   | set_light_keyboard      | 键盘灯，只操作亮、灭      |
+| 按键灯     | LIGHT_ID_BUTTONS       | BUTTON_FILE     | set_light_buttons       | 按键灯（经常和上面是同一个灯）                |
+| 充电指示灯 | LIGHT_ID_BATTERY       | red, blue,green | set_light_battery       | 一般跟通知灯是同一个，只能在BatteryService中调用    |
 | 通知灯     | LIGHT_ID_NOTIFICATIONS | red, blue,green | set_light_notifications | 只在NotificationManagerService中调用，只会在灭屏的时候闪烁通知等，且每次亮屏关闭，调用updateLightsLocked。 |
-|            | LIGHT_ID_ATTENTION     | TRACKBALL_FILE  | set_light_attention     | LIGHT_FLASH_HARDWARE这个闪灯模式                             |
-|            | LIGHT_ID_BLUETOOTH     |                 |                         | 暂时未启用                                                   |
-|            | LIGHT_ID_WIFI          |                 |                         | 暂时未启用                                                   |
+|            | LIGHT_ID_ATTENTION     | TRACKBALL_FILE  | set_light_attention     | LIGHT_FLASH_HARDWARE这个闪灯模式                |
+|            | LIGHT_ID_BLUETOOTH     |                 |                         | 暂时未启用         
+|            | LIGHT_ID_WIFI          |                 |                         | 暂时未启用                   |
+
+
 下面介绍几种重要的灯。
 
 
