@@ -1,6 +1,6 @@
 ---
 layout: post
-title: AndroidQ通知灯
+title: Android中的lights小系统
 categories: Android
 tags: lights
 published: true
@@ -13,7 +13,7 @@ comments: true
 
 >Lights是Android里面一个相对比较简单但是重要的子系统，通过Lights的服务，手机才得以控制亮屏、灭屏，呼吸灯，按键灯等跟LED相关的功能。本文将对几种常用的灯做简单的介绍。
 
-#### Android中Light的类型
+### Android中Light的类型
 Android设备中的原生的LED灯的类型可以查看下面的文件
 ```java
 frameworks/base/services/core/java/com/android/server/lights/LightsManager.java
@@ -33,8 +33,8 @@ frameworks/base/services/core/java/com/android/server/lights/LightsManager.java
 
 
 每种ID的灯的详情如下
-| 名称       | Light ID               | 对应节点文件    | 执行函数(lights.c)      | 备注                                                         |
-| :--------- | ---------------------- | --------------- | ----------------------- | ------------------------------------------------------------ |
+| 名称       | Light ID    | 对应节点文件    | 执行函数(lights.c)  | 备注  |
+| :--------- | :---------------------- | :--------------- | :----------------------- |:------------------------------------------------------------ |
 | 背光灯     | LIGHT_ID_BACKLIGHT     | LCD_FILE        | set_light_backlight     | 背光灯，只操作亮度                                           |
 | 键盘灯     | LIGHT_ID_KEYBOARD      | KEYBOARD_FILE   | set_light_keyboard      | 键盘灯，只操作亮/灭                                          |
 | 按键灯     | LIGHT_ID_BUTTONS       | BUTTON_FILE     | set_light_buttons       | 按键灯（经常和上面是同一个灯）                               |
@@ -47,14 +47,14 @@ frameworks/base/services/core/java/com/android/server/lights/LightsManager.java
 下面介绍几种重要的灯。
 
 
-#### 背光灯
+### 背光灯
 
 背光灯只能操作亮度，在用户界面可以通过设置菜单或者通知栏里面可以调节背光亮度。如果是在自动模式下，会根据光线感应自动调节屏幕的亮度。
-##### 背光灯亮度调节流程
-![](../_assets/2021-01-20/背光灯流程图.PNG)
+#### 背光灯亮度调节流程
+![](https://raw.githubusercontent.com/rainhu/rainhu.github.io/master/_assets/2021-01-20/%E8%83%8C%E5%85%89%E7%81%AF%E6%B5%81%E7%A8%8B%E5%9B%BE.PNG)
 
 
-#### 电池充电指示灯
+### 电池充电指示灯
 池指示用来显示不同电量下的在充电和非充电的时候的状态，比如在设备处于低电量的时候通过持续闪烁红灯提醒用户电量较低需要充电。
 
 充电指示灯的实例通过下面的方式获取
@@ -218,7 +218,7 @@ class MainActivity : AppCompatActivity() {
 
 完整代码参考如下附件
 
-[lightsDemo.zip](:/d517b4d2b02b4c5982281b2ca0a02d70)
+[lightsDemo.zip](https://github.com/rainhu/lightsdemo)
 
 
 
@@ -329,7 +329,7 @@ mBacklight.setBrightness(brightness); //设置亮度
 
 设置亮度的流程如下
 
-![1111](:/6888d0be51b43d1fef111dc109e5c2ed)
+![1111](https://raw.githubusercontent.com/rainhu/rainhu.github.io/master/_assets/2021-01-20/%E8%AE%BE%E7%BD%AE%E4%BA%AE%E5%BA%A6%E7%9A%84%E6%B5%81%E7%A8%8B.png)
 
 LightsService#setLightLocked
 ===>  LightsService#setLight_native
@@ -363,7 +363,7 @@ blue = colorRGB & 0xFF;
 
 第二个参数是flashmode，flashmode有下面几种类型，如果不需要闪烁，则flashmode为LIGHT_FLASH_NONE，比如设置LCD背光亮度的时候就是这个参数，如果需要闪烁，且指定了on/off时间，则用LIGHT_FLASH_TIMED模式，LIGHT_FLASH_HARDWARE表示由硬件决定闪烁频率，对应LightsImpl#pulse会设置这个模式。
 
-```h
+```c
 hardware/libhardware/include/hardware/lights.h
 77   * Flash modes for the flashMode field of light_state_t.
 78   */
@@ -392,7 +392,7 @@ hardware/libhardware/include/hardware/lights.h
 
 第五个参数有下面两个值，BRIGHTNESS_MODE_USER表示背光亮度是用户设置的，BRIGHTNESS_MODE_SENSOR表示自动背光，一般在LIGHT_ID_BACKLIGHT才用到
 
-```h
+```c
 96 /**
 97  * Light brightness is managed by a user setting.
 98  */
@@ -437,73 +437,26 @@ vendor/mediatek/proprietary/hardware/liblights/lights.c
 ```
 
 
+### AOSP中的LED闪烁频率
 
-#### AOSP中的LED闪烁频率
-
-##### 1. 低电量的时候
+#### 1. 低电量的时候
 
 on : 125ms   [config_notificationsBatteryLedOn]
 
 off : 2875ms  [config_notificationsBatteryLedOff]
 
 
-##### 2. 未接电话、未接短信
+#### 2. 未接电话、未接短信
 
 on: 500ms   [config_defaultNotificationLedOn]
 
 off:2000ms  [config_defaultNotificationLedOff]
 
-AndroidQ相比较AndroidP在通知灯那边的处理出现了较大的变化
 
-AndroidQ
-frameworks/base/services/core/java/com/android/server/notification/NotificationManagerService.java
-
-```
-void buzzBeepBlinkLocked(NotificationRecord record) {
- ... ...
-        boolean wasShowLights = mLights.remove(key);
-        if (canShowLightsLocked(record, aboveThreshold)) {
-            mLights.add(key);
-            updateLightsLocked();
-            if (mUseAttentionLight) {
-                mAttentionLight.pulse();
-            }
-            blink = true;
-        } else if (wasShowLights) {
-            updateLightsLocked();
-        }
-... ...
-}
-```
-
-
-
-Android P
-
-```
-void buzzBeepBlinkLocked(NotificationRecord record) {
- ... ...
-      boolean wasShowLights = mLights.remove(key);
-        if (record.getLight() != null && aboveThreshold
-                && ((record.getSuppressedVisualEffects() & SUPPRESSED_EFFECT_LIGHTS) == 0)) {
-            mLights.add(key);
-            updateLightsLocked();
-            if (mUseAttentionLight) {
-                mAttentionLight.pulse();
-            }
-            blink = true;
-        } else if (wasShowLights) {
-            updateLightsLocked();
-        }
-... ...
-}
-```
-
-
-#### Android Q LED的变化
+### Android Q LED的变化
 可以看到AndroidQ相比较Android P新增加了canShowLightsLocked的判断，如果判断不过mLights.add(key);将不会被调用，对应通知所产生的通知灯将不会加入到数组中，后面即使满足亮灯的条件，在updateLightsLocked中也会因为没有这个通知灯而不亮
 
-```
+```java
     @GuardedBy("mNotificationLock")
     boolean canShowLightsLocked(final NotificationRecord record, boolean aboveThreshold) {
         // device lacks light
@@ -631,5 +584,5 @@ AndroidP由于没有canShowLightsLocked这个校验，就没有上述1，2，3�
 
 
 
-#### 写在最后
+### 写在最后
 2020年对于每个人来说都是不平凡的一年，对于我来说也经历了太多。将近有一年没有更新博客，有着各种各样的原因和借口，争取在2021年每个月至少更新一篇，继续加油！
