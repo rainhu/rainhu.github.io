@@ -27,14 +27,9 @@ frameworks/base/services/core/java/com/android/server/lights/LightsManager.java
 29      public static final int LIGHT_ID_WIFI = Type.WIFI;　//暂时未启用
 ```
 
-
-
-
-
-
 每种ID的灯的详情如下
-| 名称  | Light ID | 对应节点文件 | 执行函数(lights.c) | 备注  |
-| :--------- | :---------- | :-------------- | :-------------- |:---------- |
+| 名称 | Light ID | 对应节点文件 | 执行函数(lights.c) | 备注 |
+| :--------- | :---------- | :-------------- | :------------- |:---------- |
 
 | 背光灯     | LIGHT_ID_BACKLIGHT     | LCD_FILE        | set_light_backlight     | 背光灯，只操作亮度    |
 | 键盘灯     | LIGHT_ID_KEYBOARD      | KEYBOARD_FILE   | set_light_keyboard      | 键盘灯，只操作亮、灭      |
@@ -44,6 +39,12 @@ frameworks/base/services/core/java/com/android/server/lights/LightsManager.java
 |            | LIGHT_ID_ATTENTION     | TRACKBALL_FILE  | set_light_attention     | LIGHT_FLASH_HARDWARE这个闪灯模式      |
 |            | LIGHT_ID_BLUETOOTH     |                 |                         | 暂时未启用 |
 |            | LIGHT_ID_WIFI          |                 |                         | 暂时未启用     |
+
+
+
+
+
+
 
 
 下面介绍几种重要的灯。
