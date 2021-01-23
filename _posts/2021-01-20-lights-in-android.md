@@ -13,7 +13,7 @@ comments: true
 
 >Lights是Android里面一个相对比较简单但是重要的子系统，通过Lights的服务，手机才得以控制亮屏、灭屏，呼吸灯，按键灯等跟LED相关的功能。本文将对几种常用的灯做简单的介绍。
 
-### Android中Light的类型
+## Android中Light的类型
 Android设备中的原生的LED灯的类型可以查看下面的文件
 ```java
 frameworks/base/services/core/java/com/android/server/lights/LightsManager.java
@@ -33,8 +33,8 @@ frameworks/base/services/core/java/com/android/server/lights/LightsManager.java
 
 
 每种ID的灯的详情如下
-| 名称  | Light ID | 对应节点文件    | 执行函数(lights.c)  | 备注  |
-| :--------- | :---------- | :-------------- | :-------------- | :----------|
+| 名称  | Light ID | 对应节点文件 | 执行函数(lights.c) | 备注  |
+| :--------- | :---------- | :-------------- | :-------------- |:---------- |
 
 | 背光灯     | LIGHT_ID_BACKLIGHT     | LCD_FILE        | set_light_backlight     | 背光灯，只操作亮度    |
 | 键盘灯     | LIGHT_ID_KEYBOARD      | KEYBOARD_FILE   | set_light_keyboard      | 键盘灯，只操作亮、灭      |
@@ -459,7 +459,7 @@ on: 500ms   [config_defaultNotificationLedOn]
 off:2000ms  [config_defaultNotificationLedOff]
 
 
-### Android Q LED的变化
+## Android Q LED的变化
 AndroidQ相比较AndroidP在通知灯那边的处理出现了较大的变化
 
 AndroidQ
@@ -634,5 +634,5 @@ mInCall = TelephonyManager.EXTRA_STATE_OFFHOOK.equals(intent.getStringExtra(Tele
 AndroidP由于没有canShowLightsLocked这个校验，就没有上述1，2，3条的限制，app生成的通知，未接来电和未接短信都会在灭屏时候亮起。
 
 
-### 写在最后
+## 写在最后
 2020年对于每个人来说都是不平凡的一年，对于我来说也经历了太多。将近有一年没有更新博客，有着各种各样的原因和借口，争取在2021年每个月至少更新一篇，继续加油！
